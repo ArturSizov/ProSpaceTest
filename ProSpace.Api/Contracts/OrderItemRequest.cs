@@ -1,6 +1,4 @@
-﻿using ProSpace.DataAcsess.Entites.Supply;
-
-namespace ProSpace.Api.Contracts
+﻿namespace ProSpace.Api.Contracts
 {
     /// <summary>
     /// Order item request

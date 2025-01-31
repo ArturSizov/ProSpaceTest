@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProSpace.Application", "ProSpace.Application\ProSpace.Application.csproj", "{6C111029-656A-40B9-A467-02F1000BE84E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProSpace.DataAcsess", "ProSpace.DataAcsess\ProSpace.DataAcsess.csproj", "{2C0B3D10-56DC-40DE-AF23-6ADAB692568B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProSpace.Domain", "ProSpace.Domain\ProSpace.Domain.csproj", "{ECEE939C-C351-4964-978C-AA747F3414FD}"
@@ -17,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6C111029-656A-40B9-A467-02F1000BE84E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6C111029-656A-40B9-A467-02F1000BE84E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6C111029-656A-40B9-A467-02F1000BE84E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6C111029-656A-40B9-A467-02F1000BE84E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2C0B3D10-56DC-40DE-AF23-6ADAB692568B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2C0B3D10-56DC-40DE-AF23-6ADAB692568B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C0B3D10-56DC-40DE-AF23-6ADAB692568B}.Release|Any CPU.ActiveCfg = Release|Any CPU
