@@ -10,12 +10,12 @@ namespace ProSpace.Api.Controllers
     [ApiController]
     [Route("[controller]")]
 
-    public class ItemController : ControllerBase
+    public class ItemsController : ControllerBase
     {
         /// <summary>
         /// Logger
         /// </summary>
-        private readonly ILogger<ItemController> _logger;
+        private readonly ILogger<ItemsController> _logger;
 
         /// <summary>
         /// Items service
@@ -27,7 +27,7 @@ namespace ProSpace.Api.Controllers
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="itemsService"></param>
-        public ItemController(ILogger<ItemController> logger, IItemsService itemsService)
+        public ItemsController(ILogger<ItemsController> logger, IItemsService itemsService)
         {
             _logger = logger;
             _itemsService = itemsService;

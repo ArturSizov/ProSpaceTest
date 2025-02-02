@@ -73,6 +73,21 @@ namespace ProSpace.DataAcsess.Repositories
         }
 
         /// <inheritdoc/>
+        public async Task<CustomerModel?> GetByCodeAsync(string code)
+        {
+            try
+            {
+                var customerEntity = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Code == code);
+
+                return customerEntity?.ToModel() ?? throw new Exception("Customer not found");
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <inheritdoc/>
         public Task<CustomerModel[]?> GetByFilterAsync(string code, string name, decimal price, string category, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();

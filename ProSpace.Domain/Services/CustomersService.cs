@@ -30,13 +30,9 @@ namespace ProSpace.Domain.Services
         public Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
             => _unitOfWork.CustomersRepository.DeleteAsync(id, cancellationToken);
 
-        /// <inheritdoc/>
-        public Task<CustomerModel[]?> GetByFilterAsync(string code, string name, decimal price, string category, CancellationToken cancellationToken = default)
-            => _unitOfWork.CustomersRepository.GetByFilterAsync(code, name, price, category);
+        public Task<CustomerModel?> GetByCodeAsync(string code)
+            => _unitOfWork.CustomersRepository.GetByCodeAsync(code);
 
-        /// <inheritdoc/>
-        public Task<CustomerModel[]?> GetByPageAsync(int page, int pasgeSize)
-            => _unitOfWork.CustomersRepository.GetByPageAsync(page, pasgeSize);
 
         /// <inheritdoc/>
         public Task<CustomerModel[]?> ReadAllAsync(CancellationToken cancellationToken = default)

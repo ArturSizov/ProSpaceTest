@@ -36,13 +36,5 @@ namespace ProSpace.Domain.Services
         /// <inheritdoc/>
         public Task<ItemModel[]?> ReadAllAsync(CancellationToken cancellationToken = default)
             => _unitOfWork.ItemsRepository.ReadAllAsync(cancellationToken);
-
-        /// <inheritdoc/>
-        public Task<ItemModel[]?> GetByFilterAsync(string code, string name, decimal price, string category, CancellationToken cancellationToken = default)
-           => _unitOfWork.ItemsRepository.GetByFilterAsync(code, name, price, category);            
-
-        /// <inheritdoc/>
-        public Task<ItemModel[]?> GetByPageAsync(int page, int pasgeSize)
-          => _unitOfWork.ItemsRepository.GetByPageAsync(page, pasgeSize);
     }
 }

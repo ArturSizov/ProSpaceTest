@@ -3,11 +3,6 @@ using Microsoft.Extensions.Logging;
 using ProSpace.DataAcsess.Mappers;
 using ProSpace.Domain.Interfaces.Repositories;
 using ProSpace.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProSpace.DataAcsess.Repositories
 {
@@ -78,15 +73,52 @@ namespace ProSpace.DataAcsess.Repositories
         }
 
         /// <inheritdoc/>
-        public Task<OrderModel[]?> GetByFilterAsync(string code, string name, decimal price, string category, CancellationToken cancellationToken = default)
+        public async Task<OrderModel[]?> GetByCustomerCode(string customerCode)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var orders = await _dbContext.Orders
+                                   .Where(o => o.Customer.Code == customerCode)
+                                   .ToListAsync();
+
+                return orders.Select(x => x.ToModel()).ToArray();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         /// <inheritdoc/>
-        public Task<OrderModel[]?> GetByPageAsync(int page, int pasgeSize)
+        public async Task<OrderModel[]?> GetByCustomerId(Guid customerId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var orders = await _dbContext.Orders
+                                   .Where(o => o.Customer.Id == customerId)
+                                   .ToListAsync();
+
+                return orders.Select(x => x.ToModel()).ToArray();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<OrderModel?> GetByOrderNumber(int orderNumber)
+        {
+            try
+            {
+                var orderEntity = await _dbContext.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
+
+                return orderEntity?.ToModel() ?? throw new Exception("Order is null");
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         /// <inheritdoc/>
@@ -95,6 +127,7 @@ namespace ProSpace.DataAcsess.Repositories
             try
             {
                 var orders = await _dbContext.Orders.ToArrayAsync();
+
                 return orders.Select(x => x.ToModel()).ToArray();
             }
             catch (Exception ex)

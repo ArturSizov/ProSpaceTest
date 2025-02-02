@@ -57,15 +57,6 @@ namespace ProSpace.Domain.Interfaces
         /// <param name="category"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<TItem[]?> GetByFilterAsync(string code, string name, decimal price, string category, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Vagination
-        /// </summary>
-        /// <param name="page"></param>
-        /// <param name="pasgeSize"></param>
-        /// <returns></returns>
-        Task<TItem[]?> GetByPageAsync(int page, int pasgeSize);
     }
 }
 

@@ -26,12 +26,21 @@ namespace ProSpace.Domain.Services
             => _unitOfWork.OrdersRepository.DeleteAsync(id, cancellationToken);
 
         /// <inheritdoc/>
-        public Task<OrderModel[]?> GetByFilterAsync(string code, string name, decimal price, string category, CancellationToken cancellationToken = default)
-            => _unitOfWork.OrdersRepository.GetByFilterAsync(code, name, price, category);
+        public Task<OrderModel[]?> GetByCustomerCode(string customerCode)
+            => _unitOfWork.OrdersRepository.GetByCustomerCode(customerCode);
 
         /// <inheritdoc/>
-        public Task<OrderModel[]?> GetByPageAsync(int page, int pasgeSize)
-            => _unitOfWork.OrdersRepository.GetByPageAsync(page, pasgeSize);
+        public Task<OrderModel[]?> GetByCustomerId(Guid customerId)
+            => _unitOfWork.OrdersRepository.GetByCustomerId(customerId);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderNumber"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public Task<OrderModel?> GetByOrderNumber(int orderNumber)
+            => _unitOfWork.OrdersRepository.GetByOrderNumber(orderNumber);
 
         /// <inheritdoc/>
         public Task<OrderModel[]?> ReadAllAsync(CancellationToken cancellationToken = default)

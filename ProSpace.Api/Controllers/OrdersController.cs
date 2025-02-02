@@ -7,12 +7,12 @@ namespace ProSpace.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class OrderController : ControllerBase
+    public class OrdersController : ControllerBase
     {
         /// <summary>
         /// Logger
         /// </summary>
-        private readonly ILogger<OrderController> _logger;
+        private readonly ILogger<OrdersController> _logger;
 
         /// <summary>
         /// Order service
@@ -24,7 +24,7 @@ namespace ProSpace.Api.Controllers
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="service"></param>
-        public OrderController(ILogger<OrderController> logger, IOrderService service)
+        public OrdersController(ILogger<OrdersController> logger, IOrderService service)
         {
             _logger = logger;
             _service = service;
@@ -45,6 +45,78 @@ namespace ProSpace.Api.Controllers
                 _logger.LogInformation($"{response?.Count()}");
 
                 return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Receives orders by customer ID controller
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
+        [HttpPut("/orders/{customerId:guid}")]
+        //[Authorize]
+        public async Task<ActionResult<OrderRequest[]>> GetByCustomerId(Guid customerId)
+        {
+            try
+            {
+                var orders = await _service.GetByCustomerId(customerId);
+
+                _logger.LogInformation($"{orders?.Count()}");
+
+                return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Receives orders by customer code
+        /// </summary>
+        /// <param name="customerCode"></param>
+        /// <returns></returns>
+        [HttpPut("/orders/{customerCode}")]
+        //[Authorize]
+        public async Task<ActionResult<OrderRequest[]>> GetByCustomerCode(string customerCode)
+        {
+            try
+            {
+                var orders = await _service.GetByCustomerCode(customerCode);
+
+                _logger.LogInformation($"{orders?.Count()}");
+
+                return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Receives an order by order number
+        /// </summary>
+        /// <param name="orderNumber"></param>
+        /// <returns></returns>
+        [HttpPut("/orders/{orderNumber:int}")]
+        //[Authorize]
+        public async Task<ActionResult<OrderRequest>> GetByOrderNumber(int orderNumber)
+        {
+            try
+            {
+                var order = await _service.GetByOrderNumber(orderNumber);
+
+                _logger.LogInformation($"{order?.Id}");
+
+                return Ok(order);
             }
             catch (Exception ex)
             {

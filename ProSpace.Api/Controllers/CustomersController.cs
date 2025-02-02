@@ -7,12 +7,12 @@ namespace ProSpace.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CustomerController : ControllerBase
+    public class CustomersController : ControllerBase
     {
         /// <summary>
         /// Logger
         /// </summary>
-        private readonly ILogger<CustomerController> _logger;
+        private readonly ILogger<CustomersController> _logger;
 
         /// <summary>
         /// Customer service
@@ -24,14 +24,14 @@ namespace ProSpace.Api.Controllers
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="service"></param>
-        public CustomerController(ILogger<CustomerController> logger, ICustomersService service)
+        public CustomersController(ILogger<CustomersController> logger, ICustomersService service)
         {
             _logger = logger;
             _service = service;
         }
 
         /// <summary>
-        /// Get orders response
+        /// Get customers response
         /// </summary>
         /// <returns></returns>
         [HttpGet("/customers")]
@@ -54,7 +54,31 @@ namespace ProSpace.Api.Controllers
         }
 
         /// <summary>
-        /// Create order
+        /// Get customer by code response
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("/customers/{code}")]
+        //[Authorize]
+        public async Task<ActionResult<CustomerRequest>> GetCustomerByCodeAsync(string code, [FromBody] CustomerRequest request)
+        {
+            try
+            {
+                var customer = await _service.GetByCodeAsync(code);
+
+                _logger.LogInformation($"{customer?.Name}");
+
+                return Ok(customer);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Create customers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
