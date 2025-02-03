@@ -73,16 +73,6 @@ namespace ProSpace.DataAcsess.Repositories
             }
         }
 
-        public Task<OrderItemModel[]?> GetByFilterAsync(string code, string name, decimal price, string category, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<OrderItemModel[]?> GetByPageAsync(int page, int pasgeSize)
-        {
-            throw new NotImplementedException();
-        }
-
         /// <inheritdoc/>
         public async Task<OrderItemModel[]?> ReadAllAsync(CancellationToken cancellationToken = default)
         {

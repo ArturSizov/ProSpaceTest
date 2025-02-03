@@ -27,6 +27,9 @@ namespace ProSpace.Api.Services
             _ = await _dataContext.Database.EnsureCreatedAsync(stoppingToken);
             await SeedData.SeedUsersAsync(_userManager, _roleManager, _unitOfWork);
             await SeedData.SeedItemsAsync(_unitOfWork);
+            await SeedData.SeedCustomersAsync(_unitOfWork);
+            await SeedData.SeedOrdersAsync(_unitOfWork);
+            await SeedData.SeedOrderItemsAsync(_unitOfWork);
         }
     }
 }
