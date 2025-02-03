@@ -1,25 +1,38 @@
 ﻿using ProSpace.Domain.Interfaces.Repositories;
 using ProSpace.Domain.Interfaces.Services;
+using ProSpace.Domain.Interfaces.Validations;
 using ProSpace.Domain.Models;
 
 namespace ProSpace.Domain.Services
 {
     public class OrdersService : IOrderService
     {
+        /// <summary>
+        /// Validation service
+        /// </summary>
+        private readonly IValidationProvider<OrderModel> _validation;
+
+        /// <summary>
+        /// Unit of Work
+        /// </summary>
         private readonly IUnitOfWork _unitOfWork;
 
         /// <summary>
         /// Ctor
         /// </summary>
         /// <param name="unitOfWork"></param>
-        public OrdersService(IUnitOfWork unitOfWork)
+        public OrdersService(IValidationProvider<OrderModel> validation, IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
+            _validation = validation;
         }
 
         /// <inheritdoc/>
-        public Task<bool> CreateAsync(OrderModel order, CancellationToken cancellationToken = default)
-            => _unitOfWork.OrdersRepository.CreateAsync(order, cancellationToken);
+        public async Task<bool> CreateAsync(OrderModel order, CancellationToken cancellationToken = default)
+        {
+            await _validation.ValidateAsync(order);
+            return await _unitOfWork.OrdersRepository.CreateAsync(order, cancellationToken);
+        }
 
         /// <inheritdoc/>
         public Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)

@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ProSpace.Api.Services;
@@ -6,7 +7,11 @@ using ProSpace.DataAcsess.Entites.Users;
 using ProSpace.DataAcsess.Repositories;
 using ProSpace.Domain.Interfaces.Repositories;
 using ProSpace.Domain.Interfaces.Services;
+using ProSpace.Domain.Interfaces.Validations;
+using ProSpace.Domain.Models;
 using ProSpace.Domain.Services;
+using ProSpace.Infrastructure.Validations;
+using ProSpace.Infrastructure.Validations.Services;
 
 internal class Program
 {
@@ -62,6 +67,20 @@ internal class Program
             .AddScoped<IOtderItemsService, OrderItemsService>()
             .AddScoped<IOrderService, OrdersService>()
             .AddScoped<ICustomersService, CustomersService>();
+
+        // validation services
+        builder.Services
+            .AddScoped<IValidationProvider<CustomerModel>, CustomerValidationsService>()
+            .AddScoped<IValidator<CustomerModel>, CustomerValidations>()
+
+            .AddScoped<IValidationProvider<ItemModel>, ItemValidationsService>()
+            .AddScoped<IValidator<ItemModel>, ItemValidations>()
+
+            .AddScoped<IValidationProvider<OrderModel>, OrderValidationsService>()
+            .AddScoped<IValidator<OrderModel>, OrderValidations>()
+
+            .AddScoped<IValidationProvider<OrderItemModel>, OrderItemValidationsService>()
+            .AddScoped<IValidator<OrderItemModel>, OrderItemValidations>();
 
         // background services
         builder.Services.AddHostedService<InitialService>();

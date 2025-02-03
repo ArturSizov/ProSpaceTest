@@ -1,11 +1,4 @@
-﻿using ProSpace.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProSpace.Domain.Interfaces
+﻿namespace ProSpace.Domain.Interfaces
 {
     public interface IBasicCRUD<TItem, TKey> where TItem : class
     {
@@ -47,16 +40,6 @@ namespace ProSpace.Domain.Interfaces
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<TItem[]?> ReadAllAsync(CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Search by fields
-        /// </summary>
-        /// <param name="code"></param>
-        /// <param name="name"></param>
-        /// <param name="price"></param>
-        /// <param name="category"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
     }
 }
 

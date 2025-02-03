@@ -1,5 +1,6 @@
 ﻿using ProSpace.Domain.Interfaces.Repositories;
 using ProSpace.Domain.Interfaces.Services;
+using ProSpace.Domain.Interfaces.Validations;
 using ProSpace.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -11,20 +12,32 @@ namespace ProSpace.Domain.Services
 {
     public class CustomersService : ICustomersService
     {
+        /// <summary>
+        /// Validation service
+        /// </summary>
+        private readonly IValidationProvider<CustomerModel> _validation;
+
+        /// <summary>
+        /// Unit of Work
+        /// </summary>
         private readonly IUnitOfWork _unitOfWork;
 
         /// <summary>
         /// Ctor
         /// </summary>
         /// <param name="unitOfWork"></param>
-        public CustomersService(IUnitOfWork unitOfWork)
+        public CustomersService(IValidationProvider<CustomerModel> validation, IUnitOfWork unitOfWork)
         {
+            _validation = validation;
             _unitOfWork = unitOfWork;
         }
 
         /// <inheritdoc/>
-        public Task<bool> CreateAsync(CustomerModel customer, CancellationToken cancellationToken = default)
-            => _unitOfWork.CustomersRepository.CreateAsync(customer, cancellationToken);
+        public async Task<bool> CreateAsync(CustomerModel customer, CancellationToken cancellationToken = default)
+        {
+            await _validation.ValidateAsync(customer);
+            return await _unitOfWork.CustomersRepository.CreateAsync(customer, cancellationToken);
+        }
 
         /// <inheritdoc/>
         public Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
