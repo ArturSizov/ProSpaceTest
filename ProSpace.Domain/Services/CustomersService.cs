@@ -35,7 +35,9 @@ namespace ProSpace.Domain.Services
         /// <inheritdoc/>
         public async Task<bool> CreateAsync(CustomerModel customer, CancellationToken cancellationToken = default)
         {
-            await _validation.ValidateAsync(customer);
+            if (!await _validation.ValidateAsync(customer))
+                return false;
+
             return await _unitOfWork.CustomersRepository.CreateAsync(customer, cancellationToken);
         }
 
@@ -56,7 +58,12 @@ namespace ProSpace.Domain.Services
             => _unitOfWork.CustomersRepository.ReadAsync(id, cancellationToken);
 
         /// <inheritdoc/>
-        public Task<CustomerModel?> UpdateAsync(CustomerModel entity, CancellationToken cancellationToken = default)
-            => _unitOfWork.CustomersRepository.UpdateAsync(entity, cancellationToken);
+        public async Task<CustomerModel?> UpdateAsync(CustomerModel customer, CancellationToken cancellationToken = default)
+        {
+            if (!await _validation.ValidateAsync(customer))
+                return null;
+
+            return await _unitOfWork.CustomersRepository.UpdateAsync(customer, cancellationToken);
+        }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ProSpace.DataAcsess.Entites.Supply;
-using ProSpace.DataAcsess.Mappers;
+using ProSpace.Infrastructure.Entites.Supply;
+using ProSpace.Infrastructure.Mappers;
 using ProSpace.Domain.Interfaces.Repositories;
 using ProSpace.Domain.Models;
 
-namespace ProSpace.DataAcsess.Repositories
+namespace ProSpace.Infrastructure.Repositories
 {
     /// <summary>
     /// Order items repository

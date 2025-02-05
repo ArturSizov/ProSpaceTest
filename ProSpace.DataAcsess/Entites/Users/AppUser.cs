@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using ProSpace.DataAcsess.Entites.Supply;
+using ProSpace.Infrastructure.Entites.Supply;
 
-namespace ProSpace.DataAcsess.Entites.Users
+namespace ProSpace.Infrastructure.Entites.Users
 {
     public class AppUser : IdentityUser<Guid>
     {

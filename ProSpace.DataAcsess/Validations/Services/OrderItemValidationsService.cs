@@ -21,7 +21,7 @@ namespace ProSpace.Infrastructure.Validations.Services
         }
 
         /// <inheritdoc/>
-        public async Task ValidateAsync(OrderItemModel orderItem)
+        public async Task<bool> ValidateAsync(OrderItemModel orderItem)
         {
             var validate = await _validator.ValidateAsync(orderItem ?? throw new ArgumentNullException(nameof(orderItem)));
 
@@ -34,6 +34,8 @@ namespace ProSpace.Infrastructure.Validations.Services
 
                 throw new Exception(errors);
             }
+
+            return true;
         }
     }
 }

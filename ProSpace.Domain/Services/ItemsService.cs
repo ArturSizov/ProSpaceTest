@@ -30,7 +30,9 @@ namespace ProSpace.Domain.Services
         /// <inheritdoc/>
         public async Task<bool> CreateAsync(ItemModel item, CancellationToken cancellationToken = default)
         {
-            await _validation.ValidateAsync(item);
+            if (!await _validation.ValidateAsync(item))
+                return false;
+
             return await _unitOfWork.ItemsRepository.CreateAsync(item, cancellationToken);
         }
 
@@ -39,8 +41,13 @@ namespace ProSpace.Domain.Services
             => _unitOfWork.ItemsRepository.ReadAsync(id, cancellationToken);
 
         /// <inheritdoc/>
-        public Task<ItemModel?> UpdateAsync(ItemModel entity, CancellationToken cancellationToken = default)
-            => _unitOfWork.ItemsRepository.UpdateAsync(entity, cancellationToken);
+        public async Task<ItemModel?> UpdateAsync(ItemModel model, CancellationToken cancellationToken = default)
+        {
+            if (!await _validation.ValidateAsync(model))
+                return null;
+
+            return await _unitOfWork.ItemsRepository.UpdateAsync(model, cancellationToken);
+        }
 
         /// <inheritdoc/>
         public Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)

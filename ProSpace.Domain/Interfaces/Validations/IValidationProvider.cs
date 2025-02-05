@@ -7,6 +7,6 @@
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        Task ValidateAsync(TItem item);
+        Task<bool>ValidateAsync(TItem item);
     }
 }

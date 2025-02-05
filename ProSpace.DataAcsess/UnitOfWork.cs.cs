@@ -1,6 +1,6 @@
 ﻿using ProSpace.Domain.Interfaces.Repositories;
 
-namespace ProSpace.DataAcsess
+namespace ProSpace.Infrastructure
 {
     public class UnitOfWork : IUnitOfWork
     {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ProSpace.DataAcsess.Entites.Users;
+using ProSpace.Infrastructure.Entites.Users;
 
-namespace ProSpace.DataAcsess.Configurations
+namespace ProSpace.Infrastructure.Configurations
 {
     /// <summary>
     /// App role configuration
@@ -12,7 +12,7 @@ namespace ProSpace.DataAcsess.Configurations
         public void Configure(EntityTypeBuilder<AppRole> builder)
         {
             builder.HasMany(ur => ur.UserRoles)
-                   .WithOne(u => u.Role)
+                   .WithOne(u => u.RoleApp)
                    .HasForeignKey(u => u.RoleId)
                    .IsRequired();
         }

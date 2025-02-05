@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ProSpace.DataAcsess.Entites.Supply
+namespace ProSpace.Infrastructure.Entites.Supply
 {
     /// <summary>
     /// Item/Product

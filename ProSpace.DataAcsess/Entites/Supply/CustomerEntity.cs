@@ -1,6 +1,6 @@
-﻿using ProSpace.DataAcsess.Entites.Users;
+﻿using ProSpace.Infrastructure.Entites.Users;
 
-namespace ProSpace.DataAcsess.Entites.Supply
+namespace ProSpace.Infrastructure.Entites.Supply
 {
     /// <summary>
     /// Customer
@@ -13,7 +13,6 @@ namespace ProSpace.DataAcsess.Entites.Supply
         public string? Address { get; set; }
         public decimal? Discount { get; set; }
         public ICollection<OrderEntity> Orders { get; set; } = [];
-        public Guid AppUserId { get; set; }
         public AppUser AppUser { get; set; } = null!;
     }
 

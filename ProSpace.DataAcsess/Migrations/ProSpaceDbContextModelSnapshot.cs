@@ -3,11 +3,11 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ProSpace.DataAcsess;
+using ProSpace.Infrastructure;
 
 #nullable disable
 
-namespace ProSpace.DataAcsess.Migrations
+namespace ProSpace.Infrastructure.Migrations
 {
     [DbContext(typeof(ProSpaceDbContext))]
     partial class ProSpaceDbContextModelSnapshot : ModelSnapshot
@@ -101,16 +101,13 @@ namespace ProSpace.DataAcsess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ProSpace.DataAcsess.Entites.Supply.CustomerEntity", b =>
+            modelBuilder.Entity("ProSpace.Infrastructure.Entites.Supply.CustomerEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Address")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("AppUserId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Code")
@@ -130,7 +127,7 @@ namespace ProSpace.DataAcsess.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("ProSpace.DataAcsess.Entites.Supply.ItemEntity", b =>
+            modelBuilder.Entity("ProSpace.Infrastructure.Entites.Supply.ItemEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -157,7 +154,7 @@ namespace ProSpace.DataAcsess.Migrations
                     b.ToTable("Items");
                 });
 
-            modelBuilder.Entity("ProSpace.DataAcsess.Entites.Supply.OrderEntity", b =>
+            modelBuilder.Entity("ProSpace.Infrastructure.Entites.Supply.OrderEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -185,7 +182,7 @@ namespace ProSpace.DataAcsess.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("ProSpace.DataAcsess.Entites.Supply.OrderItemEntity", b =>
+            modelBuilder.Entity("ProSpace.Infrastructure.Entites.Supply.OrderItemEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -213,7 +210,7 @@ namespace ProSpace.DataAcsess.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("ProSpace.DataAcsess.Entites.Users.AppRole", b =>
+            modelBuilder.Entity("ProSpace.Infrastructure.Entites.Users.AppRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -240,7 +237,7 @@ namespace ProSpace.DataAcsess.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("ProSpace.DataAcsess.Entites.Users.AppUser", b =>
+            modelBuilder.Entity("ProSpace.Infrastructure.Entites.Users.AppUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -311,7 +308,7 @@ namespace ProSpace.DataAcsess.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("ProSpace.DataAcsess.Entites.Users.AppUserRole", b =>
+            modelBuilder.Entity("ProSpace.Infrastructure.Entites.Users.AppUserRole", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("TEXT");
@@ -319,26 +316,16 @@ namespace ProSpace.DataAcsess.Migrations
                     b.Property<Guid>("RoleId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("RoleId1")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("UserId1")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("RoleId1");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("ProSpace.DataAcsess.Entites.Users.AppRole", null)
+                    b.HasOne("ProSpace.Infrastructure.Entites.Users.AppRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -347,7 +334,7 @@ namespace ProSpace.DataAcsess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("ProSpace.DataAcsess.Entites.Users.AppUser", null)
+                    b.HasOne("ProSpace.Infrastructure.Entites.Users.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -356,7 +343,7 @@ namespace ProSpace.DataAcsess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("ProSpace.DataAcsess.Entites.Users.AppUser", null)
+                    b.HasOne("ProSpace.Infrastructure.Entites.Users.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -365,31 +352,31 @@ namespace ProSpace.DataAcsess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("ProSpace.DataAcsess.Entites.Users.AppUser", null)
+                    b.HasOne("ProSpace.Infrastructure.Entites.Users.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProSpace.DataAcsess.Entites.Supply.OrderEntity", b =>
+            modelBuilder.Entity("ProSpace.Infrastructure.Entites.Supply.OrderEntity", b =>
                 {
-                    b.HasOne("ProSpace.DataAcsess.Entites.Supply.CustomerEntity", "Customer")
+                    b.HasOne("ProSpace.Infrastructure.Entites.Supply.CustomerEntity", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId");
 
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("ProSpace.DataAcsess.Entites.Supply.OrderItemEntity", b =>
+            modelBuilder.Entity("ProSpace.Infrastructure.Entites.Supply.OrderItemEntity", b =>
                 {
-                    b.HasOne("ProSpace.DataAcsess.Entites.Supply.ItemEntity", "Item")
+                    b.HasOne("ProSpace.Infrastructure.Entites.Supply.ItemEntity", "Item")
                         .WithMany("OrderItems")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProSpace.DataAcsess.Entites.Supply.OrderEntity", "Order")
+                    b.HasOne("ProSpace.Infrastructure.Entites.Supply.OrderEntity", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -400,49 +387,37 @@ namespace ProSpace.DataAcsess.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("ProSpace.DataAcsess.Entites.Users.AppUser", b =>
+            modelBuilder.Entity("ProSpace.Infrastructure.Entites.Users.AppUser", b =>
                 {
-                    b.HasOne("ProSpace.DataAcsess.Entites.Supply.CustomerEntity", "Customer")
+                    b.HasOne("ProSpace.Infrastructure.Entites.Supply.CustomerEntity", "Customer")
                         .WithOne("AppUser")
-                        .HasForeignKey("ProSpace.DataAcsess.Entites.Users.AppUser", "CustomerId")
+                        .HasForeignKey("ProSpace.Infrastructure.Entites.Users.AppUser", "CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("ProSpace.DataAcsess.Entites.Users.AppUserRole", b =>
+            modelBuilder.Entity("ProSpace.Infrastructure.Entites.Users.AppUserRole", b =>
                 {
-                    b.HasOne("ProSpace.DataAcsess.Entites.Users.AppRole", null)
-                        .WithMany()
+                    b.HasOne("ProSpace.Infrastructure.Entites.Users.AppRole", "RoleApp")
+                        .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProSpace.DataAcsess.Entites.Users.AppRole", "Role")
+                    b.HasOne("ProSpace.Infrastructure.Entites.Users.AppUser", "UserApp")
                         .WithMany("UserRoles")
-                        .HasForeignKey("RoleId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProSpace.DataAcsess.Entites.Users.AppUser", null)
-                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProSpace.DataAcsess.Entites.Users.AppUser", "User")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("RoleApp");
 
-                    b.Navigation("Role");
-
-                    b.Navigation("User");
+                    b.Navigation("UserApp");
                 });
 
-            modelBuilder.Entity("ProSpace.DataAcsess.Entites.Supply.CustomerEntity", b =>
+            modelBuilder.Entity("ProSpace.Infrastructure.Entites.Supply.CustomerEntity", b =>
                 {
                     b.Navigation("AppUser")
                         .IsRequired();
@@ -450,22 +425,22 @@ namespace ProSpace.DataAcsess.Migrations
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("ProSpace.DataAcsess.Entites.Supply.ItemEntity", b =>
+            modelBuilder.Entity("ProSpace.Infrastructure.Entites.Supply.ItemEntity", b =>
                 {
                     b.Navigation("OrderItems");
                 });
 
-            modelBuilder.Entity("ProSpace.DataAcsess.Entites.Supply.OrderEntity", b =>
+            modelBuilder.Entity("ProSpace.Infrastructure.Entites.Supply.OrderEntity", b =>
                 {
                     b.Navigation("OrderItems");
                 });
 
-            modelBuilder.Entity("ProSpace.DataAcsess.Entites.Users.AppRole", b =>
+            modelBuilder.Entity("ProSpace.Infrastructure.Entites.Users.AppRole", b =>
                 {
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("ProSpace.DataAcsess.Entites.Users.AppUser", b =>
+            modelBuilder.Entity("ProSpace.Infrastructure.Entites.Users.AppUser", b =>
                 {
                     b.Navigation("UserRoles");
                 });

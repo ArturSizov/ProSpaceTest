@@ -1,7 +1,7 @@
-﻿using ProSpace.DataAcsess.Entites.Supply;
+﻿using ProSpace.Infrastructure.Entites.Supply;
 using ProSpace.Domain.Models;
 
-namespace ProSpace.DataAcsess.Mappers
+namespace ProSpace.Infrastructure.Mappers
 {
     /// <summary>
     /// Order item mapper

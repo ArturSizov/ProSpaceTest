@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ProSpace.DataAcsess.Mappers;
+using ProSpace.Infrastructure.Mappers;
 using ProSpace.Domain.Interfaces.Repositories;
 using ProSpace.Domain.Models;
 
-namespace ProSpace.DataAcsess.Repositories
+namespace ProSpace.Infrastructure.Repositories
 {
     public class ItemsRepository : IItemsRepository
     {

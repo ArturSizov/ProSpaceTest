@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ProSpace.DataAcsess.Configurations;
-using ProSpace.DataAcsess.Entites.Supply;
-using ProSpace.DataAcsess.Entites.Users;
+using ProSpace.Infrastructure.Configurations;
+using ProSpace.Infrastructure.Entites.Supply;
+using ProSpace.Infrastructure.Entites.Users;
 using Microsoft.Extensions.Configuration;
 
-namespace ProSpace.DataAcsess
+namespace ProSpace.Infrastructure
 {
     /// <summary>
     /// DbContext
@@ -24,6 +24,8 @@ namespace ProSpace.DataAcsess
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             var decimalProps = modelBuilder.Model
                             .GetEntityTypes()
                             .SelectMany(t => t.GetProperties())
@@ -41,8 +43,6 @@ namespace ProSpace.DataAcsess
             modelBuilder.ApplyConfiguration(new ItemConfiguration());
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
             modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
-
-            base.OnModelCreating(modelBuilder);
         }
     }
 }

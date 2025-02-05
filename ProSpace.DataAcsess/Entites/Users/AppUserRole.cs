@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace ProSpace.DataAcsess.Entites.Users
+namespace ProSpace.Infrastructure.Entites.Users
 {
     /// <summary>
     /// App user role
     /// </summary>
     public class AppUserRole : IdentityUserRole<Guid>
     {
-        public AppUser User { get; set; } = null!;
-        public AppRole Role { get; set; } = null!;
+        public AppUser UserApp { get; set; } = null!;
+        public AppRole RoleApp { get; set; } = null!;
     }
 }

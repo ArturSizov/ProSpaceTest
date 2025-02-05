@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace ProSpace.DataAcsess.Entites.Users
+namespace ProSpace.Infrastructure.Entites.Users
 {
     /// <summary>
     /// App role

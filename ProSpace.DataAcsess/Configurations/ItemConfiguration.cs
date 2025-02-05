@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using ProSpace.DataAcsess.Entites.Supply;
+using ProSpace.Infrastructure.Entites.Supply;
 
-namespace ProSpace.DataAcsess.Configurations
+namespace ProSpace.Infrastructure.Configurations
 {
     /// <summary>
     /// Item configuration
@@ -14,5 +14,4 @@ namespace ProSpace.DataAcsess.Configurations
             builder.HasKey(o => o.Id);
         }
     }
-
 }

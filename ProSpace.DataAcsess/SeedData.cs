@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using ProSpace.DataAcsess.Entites.Supply;
-using ProSpace.DataAcsess.Entites.Users;
+using ProSpace.Infrastructure.Entites.Supply;
+using ProSpace.Infrastructure.Entites.Users;
 using ProSpace.Domain.Interfaces.Repositories;
 using ProSpace.Domain.Models;
-using System.Collections.Generic;
-using System;
 
-namespace ProSpace.DataAcsess
+namespace ProSpace.Infrastructure
 {
     /// <summary>
     ///  Creates sample data
@@ -81,12 +79,12 @@ namespace ProSpace.DataAcsess
         {
             var items = await unitOfWork.ItemsRepository.ReadAllAsync();
 
-            if (items == null || items.Count() > 100)
+            if (items == null || items.Count() > 20)
                 return;
 
             const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < 5; i++)
             {
                 var symbol = alphabet[i];
 
@@ -127,18 +125,18 @@ namespace ProSpace.DataAcsess
         {
             var customers = await unitOfWork.CustomersRepository.ReadAllAsync();
 
-            if (customers == null || customers.Count() > 20)
+            if (customers == null || customers.Count() > 10)
                 return;
 
             foreach (var customer in customers)
             {
-                for (int i = 0; i < _random.Next(1, 7); i++)
+                for (int i = 0; i < _random.Next(1, 5); i++)
                 {
                     var order = OrderModel.Create(
                         id: Guid.NewGuid(),
                         customerId: customer.Id,
                         DateOnly.FromDateTime(DateTime.Now),
-                        DateOnly.FromDateTime(DateTime.Now.AddDays(_random.Next(1, 10))),
+                        DateOnly.FromDateTime(DateTime.Now.AddDays(_random.Next(1, 6))),
                         orderNumber: i,
                         status: "New");
 

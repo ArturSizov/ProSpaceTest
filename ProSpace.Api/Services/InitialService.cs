@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using ProSpace.DataAcsess;
-using ProSpace.DataAcsess.Entites.Users;
+using ProSpace.Infrastructure;
+using ProSpace.Infrastructure.Entites.Users;
 using ProSpace.Domain.Interfaces.Repositories;
 
 namespace ProSpace.Api.Services

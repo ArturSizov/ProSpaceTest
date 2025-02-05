@@ -1,11 +1,6 @@
 ﻿using FluentValidation;
 using ProSpace.Domain.Interfaces.Validations;
 using ProSpace.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProSpace.Infrastructure.Validations.Services
 {
@@ -26,7 +21,7 @@ namespace ProSpace.Infrastructure.Validations.Services
         }
 
         /// <inheritdoc/>
-        public async Task ValidateAsync(CustomerModel customer)
+        public async Task<bool> ValidateAsync(CustomerModel customer)
         {
             var validate = await _validator.ValidateAsync(customer ?? throw new ArgumentNullException(nameof(customer)));
 
@@ -39,6 +34,8 @@ namespace ProSpace.Infrastructure.Validations.Services
 
                 throw new Exception(errors);
             }
+
+            return true;
         }
     }
 }

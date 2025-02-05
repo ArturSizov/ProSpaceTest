@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ProSpace.DataAcsess.Migrations
+namespace ProSpace.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class ProSpace : Migration
@@ -33,8 +33,7 @@ namespace ProSpace.DataAcsess.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Code = table.Column<string>(type: "TEXT", nullable: false),
                     Address = table.Column<string>(type: "TEXT", nullable: true),
-                    Discount = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: true),
-                    AppUserId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    Discount = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -176,9 +175,7 @@ namespace ProSpace.DataAcsess.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    RoleId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    UserId1 = table.Column<Guid>(type: "TEXT", nullable: false),
-                    RoleId1 = table.Column<Guid>(type: "TEXT", nullable: false)
+                    RoleId = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -190,20 +187,8 @@ namespace ProSpace.DataAcsess.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId1",
-                        column: x => x.RoleId1,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetUsers_UserId1",
-                        column: x => x.UserId1,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -281,16 +266,6 @@ namespace ProSpace.DataAcsess.Migrations
                 name: "IX_AspNetUserRoles_RoleId",
                 table: "AspNetUserRoles",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserRoles_RoleId1",
-                table: "AspNetUserRoles",
-                column: "RoleId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserRoles_UserId1",
-                table: "AspNetUserRoles",
-                column: "UserId1");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
