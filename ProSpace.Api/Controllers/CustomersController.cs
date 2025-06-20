@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ProSpace.Api.Contracts;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using ProSpace.Api.Contracts.Request;
+using ProSpace.Api.Contracts.Response;
 using ProSpace.Domain.Interfaces.Services;
 using ProSpace.Domain.Models;
 
@@ -35,8 +37,8 @@ namespace ProSpace.Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("/customers")]
-        //[Authorize]
-        public async Task<ActionResult<List<CustomerRequest>>> GetAllCustomersAsync()
+        [Authorize(Roles = "Manager")]
+        public async Task<ActionResult<List<CustomerResponse>>> GetAllCustomersAsync()
         {
             try
             {
@@ -57,15 +59,18 @@ namespace ProSpace.Api.Controllers
         /// Get customer by code response
         /// </summary>
         /// <returns></returns>
-        [HttpPost("/customers/{code}")]
-        //[Authorize]
-        public async Task<ActionResult<CustomerRequest>> GetCustomerByCodeAsync(string code, [FromBody] CustomerRequest request)
+        [HttpGet("/customers/{email}")]
+        [Authorize]
+        public async Task<ActionResult<CustomerResponse>> GetCustomerByEmailAsync(string email)
         {
             try
             {
-                var customer = await _service.GetByCodeAsync(code);
+                var customer = await _service.GetByEmailAsync(email);
 
-                _logger.LogInformation($"{customer?.Name}");
+                if (customer == null)
+                    return NotFound($"Client {email} not found");
+
+                _logger.LogInformation($"{customer.Name}");
 
                 return Ok(customer);
             }
@@ -76,31 +81,37 @@ namespace ProSpace.Api.Controllers
             }
         }
 
-
         /// <summary>
-        /// Create customers
+        /// Create customer
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("/create/customer")]
-        public async Task<IActionResult> CreateOrderAsync([FromBody] CustomerRequest request)
+        [Authorize]
+        public async Task<IActionResult> CreateCustomerAsync([FromBody] CustomerRequest request)
         {
             try
             {
-                var customer = CustomerModel.Create(Guid.NewGuid(), request.Name, request.Code, request.Address, request.Discount);
+                var customer = new CustomerModel 
+                { 
+                    Name = request.Name,
+                    Code = request.Code, 
+                    Address = request.Address, 
+                    Discount = request.Discount 
+                };
 
                 var result = await _service.CreateAsync(customer);
 
-                if (!result)
+                if (result.Item1 == null)
                 {
                     _logger.LogError("Failed to create customer");
 
-                    return BadRequest("Failed to create customer");
+                    return BadRequest(result.Item2);
                 }
 
                 _logger.LogInformation($"Customer created");
 
-                return Ok($"Customer created");
+                return Ok(result.Item1);
 
             }
             catch (Exception ex)
@@ -117,17 +128,31 @@ namespace ProSpace.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut("/update/customer/{id:guid}")]
+        [Authorize]
         public async Task<IActionResult> UpdateCustomerAsync(Guid id, [FromBody] CustomerRequest request)
         {
             try
             {
-                var customer = CustomerModel.Create(id, request.Name, request.Code, request.Address, request.Discount);
+                var customer = new CustomerModel
+                {
+                    Id = id, 
+                    Name = request.Name, 
+                    Code = request.Code, 
+                    Address = request.Address, 
+                    Discount = request.Discount
+                };
 
-                var result = await _service.UpdateAsync(customer);
+                var newCustomer = await _service.UpdateAsync(customer);
+
+                if(newCustomer == null)
+                {
+                    _logger.LogError("Customer not updated");
+                    return BadRequest("Customer not updated");
+                } 
 
                 _logger.LogInformation($"Customer updated");
 
-                return Ok(result);
+                return Ok(newCustomer);
             }
             catch (Exception ex)
             {
@@ -142,7 +167,8 @@ namespace ProSpace.Api.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpDelete("/delete/customers/{id:guid}")]
+        [HttpDelete("/delete/customer/{id:guid}")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> DeleteCustomerAsync(Guid id)
         {
             try

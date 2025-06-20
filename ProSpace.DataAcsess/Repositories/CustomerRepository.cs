@@ -30,20 +30,23 @@ namespace ProSpace.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<bool> CreateAsync(CustomerModel entity, CancellationToken cancellationToken = default)
+        public async Task<(CustomerModel?, IDictionary<string, string[]>?)> CreateAsync(CustomerModel entity, CancellationToken cancellationToken = default)
         {
             try
             {
                 var customer = entity.ToEntity();
-                _ = await _dbContext.Customers.AddAsync(customer, cancellationToken);
+                var result = await _dbContext.Customers.AddAsync(customer, cancellationToken);
                 var saved = await _dbContext.SaveChangesAsync(cancellationToken);
 
-                return saved > 0;
+                if (saved > 0)
+                    return (result.Entity.ToModel(), null);
+
+                return (null, null);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Cannot create an customer");
-                return false;
+                return (null, null);
             }
         }
 
@@ -73,11 +76,11 @@ namespace ProSpace.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<CustomerModel?> GetByCodeAsync(string code)
+        public async Task<CustomerModel?> GetByEmailAsync(string email)
         {
             try
             {
-                var customerEntity = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Code == code);
+                var customerEntity = await _dbContext.Customers.FirstOrDefaultAsync(c => c.AppUser.Email == email);
 
                 return customerEntity?.ToModel() ?? throw new Exception("Customer not found");
             }

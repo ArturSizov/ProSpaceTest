@@ -8,7 +8,7 @@
         /// <param name="entity"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<bool> CreateAsync(TItem entity, CancellationToken cancellationToken = default);
+        Task<(TItem?, IDictionary<string, string[]>?)> CreateAsync(TItem entity, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Read one item

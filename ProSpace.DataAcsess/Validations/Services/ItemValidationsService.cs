@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using ProSpace.Domain.Interfaces.Validations;
 using ProSpace.Domain.Models;
 
@@ -21,21 +22,11 @@ namespace ProSpace.Infrastructure.Validations.Services
         }
 
         /// <inheritdoc/>
-        public async Task<bool> ValidateAsync(ItemModel item)
+        public async Task<(bool, IDictionary<string, string[]>?)> ValidateAsync(ItemModel item)
         {
             var validate = await _validator.ValidateAsync(item ?? throw new ArgumentNullException(nameof(item)));
 
-            if (!validate.IsValid)
-            {
-                string? errors = string.Empty;
-
-                foreach (var error in validate.Errors)
-                    errors = $"{errors}\n" + error;
-
-                throw new Exception(errors);
-            }
-
-            return true;
+            return (validate.IsValid, validate.ToDictionary());
         }
     }
 }

@@ -7,6 +7,6 @@
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        Task<bool>ValidateAsync(TItem item);
+        Task<(bool, IDictionary<string, string[]>?)> ValidateAsync(TItem item);
     }
 }

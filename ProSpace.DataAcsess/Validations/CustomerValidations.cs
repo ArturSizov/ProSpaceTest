@@ -16,7 +16,7 @@ namespace ProSpace.Infrastructure.Validations
 
             RuleFor(i => i.Code)
                 .NotEmpty()
-                .Matches(_regex).WithMessage($"'Code' {Resources.FormatErrorCustomerCode}");
+                .Matches(_regex).WithMessage(Resources.FormatErrorCustomerCode);
         }
     }
 }

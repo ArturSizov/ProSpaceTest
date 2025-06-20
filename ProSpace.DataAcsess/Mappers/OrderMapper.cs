@@ -18,7 +18,14 @@ namespace ProSpace.Infrastructure.Mappers
             Status = model.Status,
         };
 
-        public static OrderModel ToModel(this OrderEntity entity)
-                      => new(entity.Id, entity.CustomerId, entity.OrderDate, entity.ShipmentDate, entity.OrderNumber, entity.Status);
+        public static OrderModel ToModel(this OrderEntity entity) => new()
+        {
+            Id = entity.Id,
+            CustomerId = entity.CustomerId,
+            OrderDate = entity.OrderDate,
+            OrderNumber = entity.OrderNumber,
+            ShipmentDate = entity.ShipmentDate,
+            Status = entity.Status
+        };
     }
 }

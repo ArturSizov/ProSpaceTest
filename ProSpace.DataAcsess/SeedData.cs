@@ -30,7 +30,7 @@ namespace ProSpace.Infrastructure
             var manager = new AppUser
             {
                 Email = "manager@example.com",
-                UserName = "Manager",
+                UserName = "manager@example.com",
                 EmailConfirmed = true,
                 Customer = new()
                 {
@@ -42,7 +42,7 @@ namespace ProSpace.Infrastructure
             var johnDoe = new AppUser
             {
                 Email = "johndoe@example.com",
-                UserName = "JohnDoe",
+                UserName = "johndoe@example.com",
                 EmailConfirmed = true,
                 Customer = new CustomerEntity
                 {
@@ -54,12 +54,12 @@ namespace ProSpace.Infrastructure
             var janeDoe = new AppUser
             {
                 Email = "janedoe@example.com",
-                UserName = "JaneDoe",
+                UserName = "JaneDoe2",
                 EmailConfirmed = true,
                 Customer = new CustomerEntity
                 {
                     Code = "0002-2025",
-                    Name = "Jane Doe"
+                    Name = "Jane Doe2"
                 }
             };
 
@@ -79,94 +79,26 @@ namespace ProSpace.Infrastructure
         {
             var items = await unitOfWork.ItemsRepository.ReadAllAsync();
 
-            if (items == null || items.Count() > 20)
+            if (items == null || items.Length > 20)
                 return;
 
             const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-            for (var i = 0; i < 5; i++)
+            for (var i = 0; i < 2; i++)
             {
                 var symbol = alphabet[i];
 
-                var item = ItemModel.Create(
-                    id: Guid.NewGuid(), 
-                    code: $"{i}{i}-{i}{i}{i}{i}-{symbol}{symbol}{i}{i}",
-                    name: $"Item {i}",
-                    price: i + 1, 
-                    category: $"Category {i / 5}");
+                var item = new ItemModel 
+                { 
+                    Code= $"{i}{i}-{i}{i}{i}{i}-{symbol}{symbol}{i}{i}",
+                    Name = $"Item {i}",
+                    Price = i + 1, 
+                    Category = $"Category {i++}"
+                };
 
-                await unitOfWork.ItemsRepository.CreateAsync(item);
+              await unitOfWork.ItemsRepository.CreateAsync(item);
             }
-
              await unitOfWork.CompleteAsync();
-        }
-
-        public static async Task SeedCustomersAsync(IUnitOfWork unitOfWork)
-        {
-            var customers = await unitOfWork.CustomersRepository.ReadAllAsync();
-
-            if (customers == null || customers.Count() > 20)
-                return;
-
-            for (int i = 0; i < _random.Next(1, 5); i++)
-            {
-                var customer = CustomerModel.Create(
-                    id: Guid.NewGuid(),
-                    name: $"Customer {i}",
-                    code: DateTime.Now.ToString("ddMM-yyyy"),
-                    address: $"РТ, Казань, ул.Центральная д.{i}",
-                    discount: _random.Next(1, 10) * i);
-
-                await unitOfWork.CustomersRepository.CreateAsync(customer);
-            }
-        }
-
-        public static async Task SeedOrdersAsync(IUnitOfWork unitOfWork)
-        {
-            var customers = await unitOfWork.CustomersRepository.ReadAllAsync();
-
-            if (customers == null || customers.Count() > 10)
-                return;
-
-            foreach (var customer in customers)
-            {
-                for (int i = 0; i < _random.Next(1, 5); i++)
-                {
-                    var order = OrderModel.Create(
-                        id: Guid.NewGuid(),
-                        customerId: customer.Id,
-                        DateOnly.FromDateTime(DateTime.Now),
-                        DateOnly.FromDateTime(DateTime.Now.AddDays(_random.Next(1, 6))),
-                        orderNumber: i,
-                        status: "New");
-
-                    await unitOfWork.OrdersRepository.CreateAsync(order);
-                }
-            }
-        }
-
-        public static async Task SeedOrderItemsAsync(IUnitOfWork unitOfWork)
-        {
-            var orders = await unitOfWork.OrdersRepository.ReadAllAsync();
-            var items = await unitOfWork.ItemsRepository.ReadAllAsync();
-
-            if (orders == null || orders.Count() > 50)
-                return;
-
-            if (items == null || items.Count() > 50)
-                return;
-
-            for (int i = 0; i < 12; i++)
-            {
-                var orderItem = OrderItemModel.Create(
-                   id: Guid.NewGuid(),
-                   orderId: orders.OrderBy(s => _random.NextDouble()).First().Id,
-                   itemId: items.OrderBy(s => _random.NextDouble()).First().Id,
-                   itemsCount: _random.Next(1, 100),
-                   itemPrice: _random.Next(1, 200));
-
-                await unitOfWork.OrderItemsRepository.CreateAsync(orderItem);
-            }
         }
     }
 }

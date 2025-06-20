@@ -7,8 +7,8 @@ namespace ProSpace.Domain.Interfaces.Services
         /// <summary>
         /// Returns the customer by code 
         /// </summary>
-        /// <param name="code"></param>
+        /// <param name="email"></param>
         /// <returns></returns>
-        Task<CustomerModel?> GetByCodeAsync(string code);
+        Task<CustomerModel?> GetByEmailAsync(string email);
     }
 }

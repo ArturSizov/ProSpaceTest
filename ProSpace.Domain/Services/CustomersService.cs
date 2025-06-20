@@ -1,12 +1,8 @@
-﻿using ProSpace.Domain.Interfaces.Repositories;
+﻿using ProSpace.Domain.Interfaces;
+using ProSpace.Domain.Interfaces.Repositories;
 using ProSpace.Domain.Interfaces.Services;
 using ProSpace.Domain.Interfaces.Validations;
 using ProSpace.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProSpace.Domain.Services
 {
@@ -33,20 +29,24 @@ namespace ProSpace.Domain.Services
         }
 
         /// <inheritdoc/>
-        public async Task<bool> CreateAsync(CustomerModel customer, CancellationToken cancellationToken = default)
+        public async Task<(CustomerModel?, IDictionary<string, string[]>?)> CreateAsync(CustomerModel customer, CancellationToken cancellationToken = default)
         {
-            if (!await _validation.ValidateAsync(customer))
-                return false;
+            var isValid = await _validation.ValidateAsync(customer);
 
-            return await _unitOfWork.CustomersRepository.CreateAsync(customer, cancellationToken);
+            if (!isValid.Item1)
+                return (null, isValid.Item2);
+
+            var result = await _unitOfWork.CustomersRepository.CreateAsync(customer, cancellationToken);
+
+            return (result.Item1, null);
         }
 
         /// <inheritdoc/>
         public Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
             => _unitOfWork.CustomersRepository.DeleteAsync(id, cancellationToken);
 
-        public Task<CustomerModel?> GetByCodeAsync(string code)
-            => _unitOfWork.CustomersRepository.GetByCodeAsync(code);
+        public Task<CustomerModel?> GetByEmailAsync(string email)
+            => _unitOfWork.CustomersRepository.GetByEmailAsync(email);
 
 
         /// <inheritdoc/>
@@ -60,7 +60,9 @@ namespace ProSpace.Domain.Services
         /// <inheritdoc/>
         public async Task<CustomerModel?> UpdateAsync(CustomerModel customer, CancellationToken cancellationToken = default)
         {
-            if (!await _validation.ValidateAsync(customer))
+            var isValid = await _validation.ValidateAsync(customer);
+
+            if (!isValid.Item1)
                 return null;
 
             return await _unitOfWork.CustomersRepository.UpdateAsync(customer, cancellationToken);

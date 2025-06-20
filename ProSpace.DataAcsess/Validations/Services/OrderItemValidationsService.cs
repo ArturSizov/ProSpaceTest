@@ -21,21 +21,11 @@ namespace ProSpace.Infrastructure.Validations.Services
         }
 
         /// <inheritdoc/>
-        public async Task<bool> ValidateAsync(OrderItemModel orderItem)
+        public async Task<(bool, IDictionary<string, string[]>?)> ValidateAsync(OrderItemModel orderItem)
         {
             var validate = await _validator.ValidateAsync(orderItem ?? throw new ArgumentNullException(nameof(orderItem)));
 
-            if (!validate.IsValid)
-            {
-                string? errors = string.Empty;
-
-                foreach (var error in validate.Errors)
-                    errors = $"{errors}\n" + error;
-
-                throw new Exception(errors);
-            }
-
-            return true;
+            return (validate.IsValid, validate.ToDictionary());
         }
     }
 }

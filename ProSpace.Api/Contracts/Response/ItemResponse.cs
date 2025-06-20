@@ -1,11 +1,10 @@
-﻿namespace ProSpace.Domain.Models
+﻿namespace ProSpace.Api.Contracts.Response
 {
     /// <summary>
-    /// Product/Item
+    /// Item response
     /// </summary>
-    public class ItemModel
+    public class ItemResponse
     {
-        public Guid Id { get; set; }
         public string Code { get; set; } = null!;
         public string Name { get; set; } = null!;
         public decimal Price { get; set; }

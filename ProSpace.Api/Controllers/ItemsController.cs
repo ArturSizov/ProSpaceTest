@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProSpace.Api.Contracts;
+using Microsoft.Extensions.Logging;
+using ProSpace.Api.Contracts.Request;
+using ProSpace.Api.Contracts.Response;
 using ProSpace.Domain.Interfaces.Services;
 using ProSpace.Domain.Models;
-using ProSpace.Domain.Services;
 
 namespace ProSpace.Api.Controllers
 {
@@ -33,20 +34,18 @@ namespace ProSpace.Api.Controllers
             _itemsService = itemsService;
         }
 
-
         /// <summary>
         /// Get items response
         /// </summary>
         /// <returns></returns>
         [HttpGet("/items")]
-        //[Authorize]
-        public async Task<ActionResult<List<ItemRequest>>> GetAllItemsAsync()
+        public async Task<ActionResult<List<ItemResponse>>> GetAllItemsAsync()
         {
             try
             {
                 var response = await _itemsService.ReadAllAsync();
 
-                _logger.LogInformation($"{response?.Count()}");
+                _logger.LogInformation(response?.Length.ToString());
 
                 return Ok(response);
             }
@@ -64,24 +63,31 @@ namespace ProSpace.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("/create/item")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> CreateItemAsync([FromBody] ItemRequest request)
         {
             try
             {
-                var item = ItemModel.Create(Guid.NewGuid(), request.Code, request.Name, request.Price, request.Category);
+                var item = new ItemModel
+                {
+                    Category = request.Category,
+                    Code = request.Code,
+                    Name = request.Name,
+                    Price = request.Price
+                };
 
                 var result = await _itemsService.CreateAsync(item);
 
-                if (!result)
+                if (result.Item1 == null)
                 {
                     _logger.LogError("Failed to create product");
 
-                    return BadRequest("Failed to create product");
+                    return BadRequest(result.Item2);
                 }
 
-                _logger.LogInformation($"Product {request.Name} created");
+                _logger.LogInformation("Product {request.Name} created", request.Name);
 
-                return Ok($"Product {request.Name} created");
+                return Ok(result.Item1);
 
             }
             catch (Exception ex)
@@ -98,11 +104,19 @@ namespace ProSpace.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut("/update/item/{id:guid}")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> UpdateItemAsync(Guid id, [FromBody] ItemRequest request)
         {
             try
             {
-                var item = ItemModel.Create(id, request.Code, request.Name, request.Price, request.Name);
+                var item = new ItemModel
+                {
+                    Id = id,
+                    Code = request.Code, 
+                    Name = request.Name,
+                    Price = request.Price, 
+                    Category = request.Category
+                };
 
                 var result = await _itemsService.UpdateAsync(item);
 
@@ -124,6 +138,7 @@ namespace ProSpace.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpDelete("/delete/item/{id:guid}")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> DeleteItemAsync(Guid id)
         {
             try
@@ -136,9 +151,9 @@ namespace ProSpace.Api.Controllers
                     return BadRequest("Failed to remove product");
                 }
 
-                _logger.LogInformation("Product removed");
+                _logger.LogInformation($"Product removed: {id}");
 
-                return Ok("Product removed");
+                return Ok($"Product removed: {id}");
             }
             catch (Exception ex)
             {

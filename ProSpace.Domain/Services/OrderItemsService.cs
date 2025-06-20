@@ -28,12 +28,16 @@ namespace ProSpace.Domain.Services
         }
 
         /// <inheritdoc/>
-        public async Task<bool> CreateAsync(OrderItemModel orderItem, CancellationToken cancellationToken = default)
+        public async Task<(OrderItemModel?, IDictionary<string, string[]>?)> CreateAsync(OrderItemModel orderItem, CancellationToken cancellationToken = default)
         {
-            if (!await _validation.ValidateAsync(orderItem))
-                return false;
+            var isValid = await _validation.ValidateAsync(orderItem);
 
-            return await _unitOfWork.OrderItemsRepository.CreateAsync(orderItem, cancellationToken);
+            if (!isValid.Item1)
+                return (null, isValid.Item2);
+
+            var result = await _unitOfWork.OrderItemsRepository.CreateAsync(orderItem, cancellationToken);
+
+            return (result.Item1, null);
         }
 
         /// <inheritdoc/>
@@ -43,7 +47,9 @@ namespace ProSpace.Domain.Services
         /// <inheritdoc/>
         public async Task<OrderItemModel?> UpdateAsync(OrderItemModel orderItem, CancellationToken cancellationToken = default)
         {
-            if (!await _validation.ValidateAsync(orderItem))
+            var isValid = await _validation.ValidateAsync(orderItem);
+
+            if (!isValid.Item1)
                 return null;
 
             return await _unitOfWork.OrderItemsRepository.UpdateAsync(orderItem, cancellationToken);
@@ -56,5 +62,9 @@ namespace ProSpace.Domain.Services
         /// <inheritdoc/>
         public Task<OrderItemModel[]?> ReadAllAsync(CancellationToken cancellationToken = default)
             => _unitOfWork.OrderItemsRepository.ReadAllAsync(cancellationToken);
+
+        /// <inheritdoc/>
+        public Task<OrderItemModel[]?> GetOrderItemsByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default)
+            => _unitOfWork.OrderItemsRepository.GetOrderItemsByOrderIdAsync(orderId, cancellationToken);
     }
 }

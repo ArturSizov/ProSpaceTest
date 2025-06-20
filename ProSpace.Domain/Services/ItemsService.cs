@@ -28,12 +28,20 @@ namespace ProSpace.Domain.Services
         }
 
         /// <inheritdoc/>
-        public async Task<bool> CreateAsync(ItemModel item, CancellationToken cancellationToken = default)
-        {
-            if (!await _validation.ValidateAsync(item))
-                return false;
+        public Task<ItemModel[]?> ReadAllAsync(CancellationToken cancellationToken = default)
+            => _unitOfWork.ItemsRepository.ReadAllAsync(cancellationToken);
 
-            return await _unitOfWork.ItemsRepository.CreateAsync(item, cancellationToken);
+        /// <inheritdoc/>
+        public async Task<(ItemModel?, IDictionary<string, string[]>?)> CreateAsync(ItemModel item, CancellationToken cancellationToken = default)
+        {
+            var isValid = await _validation.ValidateAsync(item);
+
+            if (!isValid.Item1)
+                return (null, isValid.Item2);
+
+            var result = await _unitOfWork.ItemsRepository.CreateAsync(item, cancellationToken);
+
+            return (result.Item1, null);
         }
 
         /// <inheritdoc/>
@@ -43,7 +51,9 @@ namespace ProSpace.Domain.Services
         /// <inheritdoc/>
         public async Task<ItemModel?> UpdateAsync(ItemModel model, CancellationToken cancellationToken = default)
         {
-            if (!await _validation.ValidateAsync(model))
+            var isValid = await _validation.ValidateAsync(model);
+
+            if (!isValid.Item1)
                 return null;
 
             return await _unitOfWork.ItemsRepository.UpdateAsync(model, cancellationToken);
@@ -52,9 +62,5 @@ namespace ProSpace.Domain.Services
         /// <inheritdoc/>
         public Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
             => _unitOfWork.ItemsRepository.DeleteAsync(id, cancellationToken);
-
-        /// <inheritdoc/>
-        public Task<ItemModel[]?> ReadAllAsync(CancellationToken cancellationToken = default)
-            => _unitOfWork.ItemsRepository.ReadAllAsync(cancellationToken);
     }
 }

@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ProSpace.Api.Contracts;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using ProSpace.Api.Contracts.Request;
+using ProSpace.Api.Contracts.Response;
 using ProSpace.Domain.Interfaces.Services;
 using ProSpace.Domain.Models;
 using ProSpace.Domain.Services;
@@ -35,17 +37,35 @@ namespace ProSpace.Api.Controllers
         /// Get order items response
         /// </summary>
         /// <returns></returns>
-        [HttpGet("/orderitems")]
-        //[Authorize]
-        public async Task<ActionResult<List<OrderItemRequest>>> GetAllOrderItemsAsync()
+        [HttpGet("/order-items")]
+        [Authorize(Roles = "Manager")]
+        public async Task<ActionResult<List<OrderItemResponse>>> GetAllOrderItemsAsync()
         {
             try
             {
                 var response = await _service.ReadAllAsync();
 
-                _logger.LogInformation($"{response?.Count()}");
+                _logger.LogInformation($"Count: {response?.Count()}");
 
                 return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("/order-items/{orderId:guid}")]
+        [Authorize]
+        public async Task<IActionResult> GetOrderItemsByOrderIdAsync(Guid orderId)
+        {
+            try
+            {
+                var orderItems = await _service.GetOrderItemsByOrderIdAsync(orderId);
+
+                _logger.LogInformation(orderItems?.Length.ToString());
+                return Ok(orderItems);
             }
             catch (Exception ex)
             {
@@ -60,24 +80,31 @@ namespace ProSpace.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("/create/order-item")]
+        [Authorize]
         public async Task<IActionResult> CreateOrderItemAsync([FromBody] OrderItemRequest request)
         {
             try
             {
-                var orderItem = OrderItemModel.Create(Guid.NewGuid(), request.OrderId, request.ItemId, request.ItemsCount, request.ItemPrice);
+                var orderItem = new OrderItemModel
+                {
+                    OrderId = request.OrderId,
+                    ItemId = request.ItemId, 
+                    ItemsCount = request.ItemsCount, 
+                    ItemPrice = request.ItemPrice 
+                };
 
                 var result = await _service.CreateAsync(orderItem);
 
-                if (!result)
+                if (result.Item1 == null)
                 {
                     _logger.LogError("Failed to create order item");
 
-                    return BadRequest("Failed to create order item");
+                    return BadRequest(result.Item2);
                 }
 
                 _logger.LogInformation($"Order item created");
 
-                return Ok($"Order item created");
+                return Ok(result.Item1);
 
             }
             catch (Exception ex)
@@ -94,17 +121,31 @@ namespace ProSpace.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut("/update/order-item/{id:guid}")]
+        [Authorize]
         public async Task<IActionResult> UpdateOrderItemAsync(Guid id, [FromBody] OrderItemRequest request)
         {
             try
             {
-                var orderItem = OrderItemModel.Create(id, request.OrderId, request.ItemId, request.ItemsCount, request.ItemPrice);
+                var orderItem = new OrderItemModel
+                {
+                    Id = id,
+                    OrderId = request.OrderId, 
+                    ItemId = request.ItemId, 
+                    ItemsCount = request.ItemsCount, 
+                    ItemPrice = request.ItemPrice
+                };
 
-                var result = await _service.UpdateAsync(orderItem);
+                var newOrderItem = await _service.UpdateAsync(orderItem);
+
+                if(newOrderItem == null)
+                {
+                    _logger.LogError("Error updated order item");
+                    return BadRequest("Error updated order item");
+                }
 
                 _logger.LogInformation($"Order item updated");
 
-                return Ok(result);
+                return Ok(newOrderItem);
             }
             catch (Exception ex)
             {
@@ -119,7 +160,8 @@ namespace ProSpace.Api.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpDelete("/delete/item-orders/{id:guid}")]
+        [HttpDelete("/delete/order-item/{id:guid}")]
+        [Authorize]
         public async Task<IActionResult> DeleteOrderItemAsync(Guid id)
         {
             try
@@ -134,7 +176,7 @@ namespace ProSpace.Api.Controllers
 
                 _logger.LogInformation("Order item removed");
 
-                return Ok("Order item removed");
+                return Ok($"Order item {id} removed");
             }
             catch (Exception ex)
             {
@@ -142,5 +184,6 @@ namespace ProSpace.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
     }
 }

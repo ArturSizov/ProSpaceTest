@@ -13,11 +13,17 @@ namespace ProSpace.Infrastructure.Mappers
             Name = model.Name,
             Code = model.Code,
             Discount = model.Discount,
-            Address = model.Address,
+            Address = model.Address
         };
 
 
-        public static CustomerModel ToModel(this CustomerEntity entity)
-            => new(entity.Id, entity.Name, entity.Code, entity.Address, entity.Discount);
+        public static CustomerModel ToModel(this CustomerEntity entity) => new()
+        {
+           Id = entity.Id,
+           Address = entity.Address,
+           Code = entity.Code,
+           Discount = entity.Discount,
+           Name = entity.Name
+        };
     }
 }

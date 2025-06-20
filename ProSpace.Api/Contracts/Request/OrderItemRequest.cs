@@ -1,4 +1,4 @@
-﻿namespace ProSpace.Api.Contracts
+﻿namespace ProSpace.Api.Contracts.Request
 {
     /// <summary>
     /// Order item request

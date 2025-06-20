@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ProSpace.Infrastructure.Entites.Supply;
 using ProSpace.Infrastructure.Mappers;
 using ProSpace.Domain.Interfaces.Repositories;
 using ProSpace.Domain.Models;
@@ -22,6 +21,11 @@ namespace ProSpace.Infrastructure.Repositories
         /// </summary>
         private readonly ProSpaceDbContext _dbContext;
 
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="dbContext"></param>
         public OrderItemsRepository(ILogger<OrderItemsRepository> logger, ProSpaceDbContext dbContext)
         {
             _logger = logger;
@@ -29,22 +33,25 @@ namespace ProSpace.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<bool> CreateAsync(OrderItemModel entity, CancellationToken cancellationToken = default)
+        public async Task<(OrderItemModel?, IDictionary<string, string[]>?)> CreateAsync(OrderItemModel entity, CancellationToken cancellationToken = default)
         {
             try
             {
                 var orderItem = entity.ToEntity();
 
-                _ = await _dbContext.OrderItems.AddAsync(orderItem, cancellationToken);
+                var result = await _dbContext.OrderItems.AddAsync(orderItem, cancellationToken);
 
                 var saved = await _dbContext.SaveChangesAsync(cancellationToken);
 
-                return saved > 0;
+                if (saved > 0)
+                    return (result.Entity.ToModel(), null);
+
+                return (null, null);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Cannot create an order item");
-                return false;
+                 throw new Exception(ex.Message);
             }
         }
 
@@ -74,6 +81,22 @@ namespace ProSpace.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
+        public async Task<OrderItemModel[]?> GetOrderItemsByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var orderItems = await _dbContext.OrderItems.Where(x => x.OrderId == orderId).ToListAsync();
+
+                return orderItems.Select(x => x.ToModel()).ToArray(); ;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Cannot read item orders by id");
+                return null;
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task<OrderItemModel[]?> ReadAllAsync(CancellationToken cancellationToken = default)
         {
             try
@@ -83,7 +106,7 @@ namespace ProSpace.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Cannot read all items");
+                _logger.LogError(ex, "Cannot read all item orders");
                 return null;
             }
         }
@@ -143,9 +166,5 @@ namespace ProSpace.Infrastructure.Repositories
             }
         }
 
-        public async Task AddItemAsync(Guid itemId, OrderItemEntity orderItemEntity)
-        {
-            var orderItem = await _dbContext.OrderItems.FirstOrDefaultAsync(o => o.ItemId == itemId);
-        }
     }
 }

@@ -9,6 +9,6 @@ namespace ProSpace.Domain.Interfaces.Repositories
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        Task<CustomerModel?> GetByCodeAsync(string code);
+        Task<CustomerModel?> GetByEmailAsync(string code);
     }
 }

@@ -16,7 +16,7 @@ namespace ProSpace.Domain.Interfaces.Services
         /// </summary>
         /// <param name="customerCode"></param>
         /// <returns></returns>
-        Task<OrderModel[]?> GetByCustomerCode(string customerCode);
+        Task<OrderModel[]?> GetByCustomerCodeAsync(string customerCode);
 
         /// <summary>
         /// Receives an order by order number

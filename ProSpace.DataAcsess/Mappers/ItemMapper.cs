@@ -16,7 +16,13 @@ namespace ProSpace.Infrastructure.Mappers
             Category = model.Category
         };
 
-        public static ItemModel ToModel(this ItemEntity entity)
-            => new(entity.Id, entity.Code, entity.Name, entity.Price, entity.Category);
+        public static ItemModel ToModel(this ItemEntity entity) => new()
+        {
+            Id = entity.Id,
+            Category = entity.Category,
+            Code = entity.Code,
+            Price = entity.Price,
+            Name = entity.Name
+        };
     }
 }

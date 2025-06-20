@@ -1,11 +1,10 @@
-﻿namespace ProSpace.Domain.Models
+﻿namespace ProSpace.Api.Contracts.Request
 {
     /// <summary>
-    /// Customer model
+    /// Customer request
     /// </summary>
-    public class CustomerModel
+    public class CustomerRequest
     {
-        public Guid Id { get; set; }
         public string Name { get; set; } = null!;
         public string Code { get; set; } = null!;
         public string? Address { get; set; }

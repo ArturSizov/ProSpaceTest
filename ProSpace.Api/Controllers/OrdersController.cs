@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ProSpace.Api.Contracts;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using ProSpace.Api.Contracts.Request;
+using ProSpace.Api.Contracts.Response;
 using ProSpace.Domain.Interfaces.Services;
 using ProSpace.Domain.Models;
 
@@ -35,8 +37,8 @@ namespace ProSpace.Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("/orders")]
-        //[Authorize]
-        public async Task<ActionResult<List<OrderRequest>>> GetAllOrdersAsync()
+        [Authorize(Roles = "Manager")]
+        public async Task<ActionResult<List<OrderResponse>>> GetAllOrdersAsync()
         {
             try
             {
@@ -58,8 +60,8 @@ namespace ProSpace.Api.Controllers
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        [HttpPut("/orders/{customerId:guid}")]
-        //[Authorize]
+        [HttpGet("/orders/{customerId:guid}")]
+        [Authorize]
         public async Task<ActionResult<OrderRequest[]>> GetByCustomerId(Guid customerId)
         {
             try
@@ -83,14 +85,14 @@ namespace ProSpace.Api.Controllers
         /// <param name="customerCode"></param>
         /// <returns></returns>
         [HttpPut("/orders/{customerCode}")]
-        //[Authorize]
-        public async Task<ActionResult<OrderRequest[]>> GetByCustomerCode(string customerCode)
+        [Authorize]
+        public async Task<ActionResult<OrderRequest[]>> GetByCustomerCodeAsync(string customerCode)
         {
             try
             {
-                var orders = await _service.GetByCustomerCode(customerCode);
+                var orders = await _service.GetByCustomerCodeAsync(customerCode);
 
-                _logger.LogInformation($"{orders?.Count()}");
+                _logger.LogInformation(orders?.Count().ToString());
 
                 return Ok(orders);
             }
@@ -107,14 +109,20 @@ namespace ProSpace.Api.Controllers
         /// <param name="orderNumber"></param>
         /// <returns></returns>
         [HttpPut("/orders/{orderNumber:int}")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<OrderRequest>> GetByOrderNumber(int orderNumber)
         {
             try
             {
                 var order = await _service.GetByOrderNumber(orderNumber);
 
-                _logger.LogInformation($"{order?.Id}");
+                if(order == null)
+                {
+                    _logger.LogError("Order by number: {orderNumber} not found", orderNumber);
+                    return NotFound($"Order by number: {orderNumber} not found");
+                }
+
+                _logger.LogInformation(order?.Id.ToString());
 
                 return Ok(order);
             }
@@ -131,24 +139,32 @@ namespace ProSpace.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("/create/order")]
+        [Authorize]
         public async Task<IActionResult> CreateOrderAsync([FromBody] OrderRequest request)
         {
             try
             {
-                var order = OrderModel.Create(Guid.NewGuid(), request.CustomerId, request.OrderDate, request.ShipmentDate, request.OrderNumber, request.Status);
+                var order = new OrderModel
+                {
+                    CustomerId = request.CustomerId, 
+                    OrderDate = request.OrderDate, 
+                    ShipmentDate = request.ShipmentDate, 
+                    OrderNumber = request.OrderNumber, 
+                    Status = request.Status 
+                };
 
                 var result = await _service.CreateAsync(order);
 
-                if (!result)
+                if (result.Item1 == null)
                 {
                     _logger.LogError("Failed to create order");
 
-                    return BadRequest("Failed to create order");
+                    return BadRequest(result.Item2);
                 }
 
                 _logger.LogInformation($"Order created");
 
-                return Ok($"Order created");
+                return Ok(result.Item1);
 
             }
             catch (Exception ex)
@@ -165,11 +181,20 @@ namespace ProSpace.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut("/update/order/{id:guid}")]
+        [Authorize]
         public async Task<IActionResult> UpdateOrderItemAsync(Guid id, [FromBody] OrderRequest request)
         {
             try
             {
-                var order = OrderModel.Create(id, request.CustomerId, request.OrderDate, request.ShipmentDate, request.OrderNumber, request.Status);
+                var order = new OrderModel
+                {
+                    Id = id, 
+                    CustomerId = request.CustomerId, 
+                    OrderDate = request.OrderDate, 
+                    ShipmentDate = request.ShipmentDate, 
+                    OrderNumber = request.OrderNumber, 
+                    Status = request.Status 
+                };
 
                 var result = await _service.UpdateAsync(order);
 
@@ -190,7 +215,8 @@ namespace ProSpace.Api.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpDelete("/delete/orders/{id:guid}")]
+        [HttpDelete("/delete/order/{id:guid}")]
+        [Authorize]
         public async Task<IActionResult> DeleteOrderItemAsync(Guid id)
         {
             try

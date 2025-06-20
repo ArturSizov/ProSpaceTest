@@ -12,6 +12,10 @@ using ProSpace.Domain.Models;
 using ProSpace.Domain.Services;
 using ProSpace.Infrastructure.Validations;
 using ProSpace.Infrastructure.Validations.Services;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 internal class Program
 {
@@ -19,38 +23,64 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-
-        builder.Services.AddControllers();
+        // For Entity Framework
+        var configuration = builder.Configuration;
 
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
 
         builder.Services.AddDbContext<ProSpaceDbContext>(
                         options => {  options.UseSqlite(builder.Configuration.GetConnectionString(nameof(ProSpaceDbContext))); })
                         .AddIdentityApiEndpoints<AppUser>()
                         .AddRoles<AppRole>()
-                        .AddEntityFrameworkStores<ProSpaceDbContext>();
+                        .AddEntityFrameworkStores<ProSpaceDbContext>()
+                        .AddDefaultTokenProviders();
 
         builder.Services.AddAuthorization();
+
+        // Adding Authentication
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.SaveToken = true;
+            options.RequireHttpsMetadata = false;
+            options.TokenValidationParameters = new TokenValidationParameters()
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidAudience = configuration["JWT:ValidAudience"],
+                ValidIssuer = configuration["JWT:ValidIssuer"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"] ?? 
+                                                                                   throw new Exception("JWT secret not found")))
+            };
+        });
+
 
         builder.Services.Configure<IdentityOptions>(options =>
         {
             // Password settings
-            options.Password.RequireDigit = true;
-            options.Password.RequireLowercase = true;
-            options.Password.RequireNonAlphanumeric = true;
-            options.Password.RequireUppercase = true;
+            options.Password.RequireDigit = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireUppercase = false;
             options.Password.RequiredLength = 6;
             options.Password.RequiredUniqueChars = 1;
 
             // Lockout settings
             options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
             options.Lockout.MaxFailedAccessAttempts = 5;
-            options.Lockout.AllowedForNewUsers = true;
+            options.Lockout.AllowedForNewUsers = false;
+
+            //SignIn settings
+            options.SignIn.RequireConfirmedEmail = false;
 
             // User settings
             options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-            options.User.RequireUniqueEmail = false;
+            options.User.RequireUniqueEmail = true;
+
         });
 
         // repositories
@@ -66,7 +96,8 @@ internal class Program
             .AddScoped<IItemsService, ItemsService>()
             .AddScoped<IOtderItemsService, OrderItemsService>()
             .AddScoped<IOrderService, OrdersService>()
-            .AddScoped<ICustomersService, CustomersService>();
+            .AddScoped<ICustomersService, CustomersService>()
+            .AddScoped<RoleManager<AppRole>>();
 
         // validation services
         builder.Services
@@ -85,12 +116,40 @@ internal class Program
         // background services
         builder.Services.AddHostedService<InitialService>();
 
-
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v1", new OpenApiInfo { Title = "Auto API", Version = "V1" });
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Description = "Веедите валидный токен",
+                Name = "Аторизация",
+                Type = SecuritySchemeType.Http,
+                BearerFormat = "JWT",
+                Scheme = "Bearer"
+            });
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new string[] {}
+                }
+            });
+        });
 
         var app = builder.Build();
+
+        //Enable CORS
+        app.UseCors(c => c.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
@@ -99,13 +158,14 @@ internal class Program
             app.UseSwaggerUI();
         }
 
-
         app.UseHttpsRedirection();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllers();
-        app.MapIdentityApi<AppUser>();
+
+        //app.MapIdentityApi<AppUser>();
 
         await app.RunAsync();
     }

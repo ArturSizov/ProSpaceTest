@@ -1,15 +1,14 @@
-﻿namespace ProSpace.Domain.Models
+﻿namespace ProSpace.Api.Contracts.Response
 {
     /// <summary>
-    /// Order model
+    /// Order response
     /// </summary>
-    public class OrderModel
+    public class OrderResponse
     {
-        public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
         public DateOnly OrderDate { get; set; }
         public DateOnly? ShipmentDate { get; set; }
-        public int? OrderNumber {  get; set; }
+        public int? OrderNumber { get; set; }
         public string? Status { get; set; }
     }
 }

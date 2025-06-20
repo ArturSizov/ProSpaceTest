@@ -1,9 +1,9 @@
-﻿namespace ProSpace.Api.Contracts
+﻿namespace ProSpace.Api.Contracts.Response
 {
     /// <summary>
-    /// Customer request
+    /// Customer response
     /// </summary>
-    public class CustomerRequest
+    public class CustomerResponse
     {
         public string Name { get; set; } = null!;
         public string Code { get; set; } = null!;

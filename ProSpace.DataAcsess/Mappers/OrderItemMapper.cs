@@ -16,7 +16,13 @@ namespace ProSpace.Infrastructure.Mappers
            ItemPrice = model.ItemPrice
         };
 
-        public static OrderItemModel ToModel(this OrderItemEntity entity)
-                      => OrderItemModel.Create(entity.Id, entity.OrderId, entity.ItemId, entity.ItemsCount, entity.ItemPrice);
+        public static OrderItemModel ToModel(this OrderItemEntity entity) => new()
+        {
+            Id = entity.Id,
+            ItemId = entity.ItemId,
+            ItemsCount = entity.ItemsCount,
+            ItemPrice = entity.ItemPrice,
+            OrderId = entity.OrderId
+        };
     }
 }
