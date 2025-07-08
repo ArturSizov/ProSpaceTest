@@ -131,7 +131,7 @@ namespace ProSpace.Api.Controllers
                     var user = new AppUser
                     {
                         Email = request.Email,
-                        UserName = request.UserName,
+                        UserName = request.Email,
                         EmailConfirmed = true,
                         Customer = customer
                     };
@@ -180,8 +180,8 @@ namespace ProSpace.Api.Controllers
 
                 if(user == null)
                 {
-                    _logger.LogError($"User with email address: {userResponse.Email} not found");
-                    return NotFound($"User with email address: {userResponse.Email} not found");
+                    _logger.LogError("User is not authorized");
+                    return Unauthorized("User is not authorized");
                 }
 
                 if (await _userManager.CheckPasswordAsync(user, userResponse.Password))
@@ -218,7 +218,7 @@ namespace ProSpace.Api.Controllers
                 }
 
                 _logger.LogError("User is not authorized");
-                return Unauthorized("Invalid password"); 
+                return Unauthorized("User is not authorized"); 
             }
             catch (Exception ex)
             {
